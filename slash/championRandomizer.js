@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 const headers = {
     "Accept": "application/json",
@@ -18,25 +19,38 @@ async function getHTML(){
 }
 
 function getRandomNumber(max){
-    let rand = floor(Math.random() * (max+1));
+    let rand = Math.floor(Math.random() * (max+1));
     return rand;
 }
 
 async function getRandomChampion(championData){
     let Keys = Object.keys(championData);
     let randomNumber = getRandomNumber(Keys.length);
-    return championData[Keys[randomNumber]].name;
+    return championData[Keys[randomNumber]];
+}
+
+async function createEmbed(name, imageName){
+    const embed = new EmbedBuilder()
+    .setColor(0xFFFFFF)
+    .setTitle(name)
+    .setImage(imageName);
+    return embed;
 }
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('rndChamp')
+        .setName('randomchampion')
         .setDescription('Gives you a random League of Legends champion'),
     async execute(client, interaction) {
         response = await getHTML();
         let JSONresponse = JSON.parse(response)
         let championData = JSONresponse['data'];
-        let championName = await getRandomChampion(championData);
-        interaction.editReply(championName);
+        let rndChampion = await getRandomChampion(championData);
+        let name  = rndChampion.name;
+        let imageLink = `http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${rndChampion.image.full}`;
+        embed = await createEmbed(name, imageLink);
+        await interaction.editReply({
+            embeds: [embed]
+        });
     },
 };
