@@ -19,7 +19,7 @@ async function getHTML(){
 }
 
 function getRandomNumber(max){
-    let rand = Math.floor(Math.random() * (max+1));
+    let rand = Math.floor(Math.random() * max);
     return rand;
 }
 
@@ -39,7 +39,7 @@ async function createEmbed(name, imageName){
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('randomchampion')
+        .setName('randomchamp')
         .setDescription('Gives you a random League of Legends champion'),
     async execute(client, interaction) {
         response = await getHTML();
